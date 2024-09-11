@@ -48,7 +48,7 @@ To run this project, you'll need:
 
 ```bash
 git clone https://github.com/satyammjha/dNotes
-cd dNotes
+cd SCM-assignment-metacrafters
 ```
 
 ### 2. **Compile the Smart Contract**
