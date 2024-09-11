@@ -1,36 +1,30 @@
-
 # **dNotes Smart Contract**
 
 ## **Overview**
+
 `dNotes` is a simple decentralized notes application built using Solidity. The smart contract enables users to increment a counter and manage a list of messages stored on the Ethereum blockchain. This repository contains the Solidity contract, its deployment, and an HTML frontend that interacts with the contract via Web3.
-
-
 
 ## **Features**
 
 - Increment a counter by 1 or a specified amount.
 - Store, retrieve, and remove messages on the blockchain.
 - Emit events to log key actions.
-  
-
 
 ## **Smart Contract Details**
 
 The `dNotes` smart contract consists of two main functionalities:
+
 - **Counter Management**: Tracks and updates a counter value.
 - **Message Management**: Allows users to add, retrieve, and remove messages on the blockchain.
 
 ### **Contract Functions**
+
 - `incrementCounter()`: Increases the counter by 1.
 - `incrementCounterBy(uint256 _amount)`: Increases the counter by a specified amount.
 - `getCounter()`: Returns the current counter value.
 - `addMessage(string memory _message)`: Adds a new message to the contract.
 - `getMessages()`: Retrieves all messages stored in the contract.
 - `removeMessage(uint256 index)`: Removes a message by index.
-
-
-
-
 
 ## **Prerequisites**
 
@@ -40,20 +34,19 @@ To run this project, you'll need:
 - **Node.js** and **npm** (if using scripts for contract deployment or interaction).
 - **Web3.js** or **Ethers.js** for integrating the contract with the HTML frontend.
 
-
-
 ## **Deployment Instructions**
 
 ### 1. **Clone the Repository**
 
 ```bash
-git clone https://github.com/satyammjha/dNotes
+git clone https://github.com/satyammjha/SCM-assignment-metacrafters
 cd SCM-assignment-metacrafters
 ```
 
 ### 2. **Compile the Smart Contract**
 
 If you're using **Remix IDE**:
+
 - Open [Remix](https://remix.ethereum.org/).
 - Paste the contract code below into a new file in Remix IDE.
 - Compile the contract by selecting the appropriate Solidity version.
@@ -115,19 +108,21 @@ contract dNotes {
 ### 3. **Deploy the Contract**
 
 For **Remix**:
+
 - Go to the **Deploy & Run Transactions** tab.
 - Deploy the contract on an Ethereum test network like Rinkeby or Goerli using MetaMask.
 
 For **Hardhat** or **Truffle**:
+
 - Run the following command to deploy the contract (if using a deployment script):
+
 ```bash
 npx hardhat run scripts/deploy.js --network rinkeby
 ```
 
 ### 4. **Get Contract Address**
+
 After the contract is deployed, take note of the **contract address**. You'll need this to interact with the contract in the frontend.
-
-
 
 ## **Interacting with the Smart Contract**
 
@@ -140,6 +135,7 @@ You can interact with the smart contract using the `index.html` file located in 
 To connect the contract in your frontend:
 
 1. **Find the Contract ABI**:
+
    - In Remix, after compiling the contract, go to the **Compiled Contracts** tab and scroll down to **ABI**.
    - Copy the entire ABI.
 
@@ -159,39 +155,36 @@ const dNotesContract = new web3.eth.Contract(contractABI, contractAddress);
 3. **Serve the HTML File**:
    You can open the `index.html` directly in your browser, or run a local server using a tool like `Live Server` in VS Code.
 
-
-
 ## **How to Use**
 
 1. **Increment the Counter**:
+
    - The frontend has a button that allows you to increment the counter by 1 or by a specified amount.
 
 2. **Add a Message**:
+
    - Use the input field to add a message to the blockchain. The message will be stored in the contract and retrieved in future requests.
 
 3. **View Messages**:
+
    - Click the "Show Messages" button to display all messages stored in the contract.
 
 4. **Remove a Message**:
    - Remove a message by specifying its index in the array.
 
-
-
 ## **Dependencies**
 
 ### For the Smart Contract:
+
 - Solidity `^0.8.0`.
 
 ### For the Frontend:
+
 - [Web3.js](https://web3js.readthedocs.io/): A JavaScript library to interact with the Ethereum blockchain.
-
-
 
 ## **License**
 
 This project is licensed under the MIT License. See the `LICENSE` file for more details.
-
-
 
 ## **Contact**
 
