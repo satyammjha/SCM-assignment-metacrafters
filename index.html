@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dNotesApp</title>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+    <style>
+        #heading {
+            text-align: center;
+            background-color: green;
+            padding: 3px;
+            border-radius: 3px;
+            width: max-content;
+            color: whitesmoke;
+            margin-left: 45%;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: black;
+            color: whitesmoke;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .container {
+            margin-bottom: 20px;
+            margin-left: 20%;
+        }
+
+        .container input,
+        .container button {
+            padding: 10px;
+            margin-right: 10px;
+            width: 10vw;
+        }
+
+        .container button {
+            cursor: pointer;
+            background-color: #4CAF50;
+            border: #333;
+            border-radius: 2px;
+            color: white;
+            border: none;
+        }
+
+        .container button:hover {
+            background-color: #45a049;
+        }
+
+        .notes {
+            border: 1px solid #ddd;
+            width: 30vw;
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .notes p {
+            margin: 5px 0;
+        }
+
+        .main-container {
+            display: flex;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 id="heading">dNotesApp</h1>
+    <div class="main-container">
+        <div class="container">
+            <h2>Add New Note</h2>
+            <input type="text" id="newNote" placeholder="Enter new note">
+            <button onclick="addNote()">Add Note</button>
+        </div>
+        <div class="container">
+            <h2>Counter</h2>
+            <input type="number" id="incrementAmount" placeholder="Amount to increment">
+            <button onclick="incrementCounterBy()">Increase Counter</button>
+            <p><strong>Current Counter Value:</strong> <span id="counterValue">0</span></p>
+        </div>
+    </div>
+    <div class="container">
+        <h2>Existing Notes</h2>
+        <div class="notes" id="notes"></div>
+    </div>
+
+
+    <script>
+        const contractAddress = '0x933bE55E12E721e5956caEF9695bbCf7586803F3';
+        const contractABI = [
+            {
+                "inputs": [
+                    {
+                        "internalType": "string",
+                        "name": "_message",
+                        "type": "string"
+                    }
+                ],
+                "name": "addMessage",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "incrementCounter",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "_amount",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "incrementCounterBy",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getCounter",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getMessages",
+                "outputs": [
+                    {
+                        "internalType": "string[]",
+                        "name": "",
+                        "type": "string[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "index",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "removeMessage",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ];
+
+        let web3;
+        let notesContract;
+
+        async function init() {
+            if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                notesContract = new web3.eth.Contract(contractABI, contractAddress);
+                getNotes();
+                getCounter();
+            } else {
+                alert("Please install MetaMask!");
+            }
+        }
+
+        async function getNotes() {
+            const accounts = await web3.eth.getAccounts();
+            const notes = await notesContract.methods.getMessages().call({ from: accounts[0] });
+            const notesContainer = document.getElementById('notes');
+            notesContainer.innerHTML = '';
+
+            notes.forEach((note, index) => {
+                const noteElement = document.createElement('div');
+                if (notes.length == 0) {
+
+                    noteElement.innerHTML = `
+                    <p><strong>No Notes Found</strong></p>
+                    <hr>
+                `;
+                    notesContainer.appendChild(noteElement);
+                    return;
+                }
+                else {
+                    noteElement.innerHTML = `
+                    <p><strong>Note ID:</strong> ${index}</p>
+                    <p><strong>Content:</strong> ${note}</p>
+                    <button onclick="deleteNote(${index})">Delete Note</button>
+                    <hr>
+                `;
+                    notesContainer.appendChild(noteElement);
+                }
+            })
+        }
+
+        async function addNote() {
+            const newNote = document.getElementById('newNote').value;
+            const accounts = await web3.eth.getAccounts();
+            await notesContract.methods.addMessage(newNote).send({ from: accounts[0] });
+            getNotes();
+        }
+
+        async function deleteNote(index) {
+            const accounts = await web3.eth.getAccounts();
+            await notesContract.methods.removeMessage(index).send({ from: accounts[0] });
+            getNotes();
+        }
+
+        async function incrementCounterBy() {
+            const amount = document.getElementById('incrementAmount').value;
+            const accounts = await web3.eth.getAccounts();
+            await notesContract.methods.incrementCounterBy(amount).send({ from: accounts[0] });
+            getCounter();
+        }
+
+        async function getCounter() {
+            const accounts = await web3.eth.getAccounts();
+            const counter = await notesContract.methods.getCounter().call({ from: accounts[0] });
+            document.getElementById('counterValue').innerText = web3.utils.fromWei(counter, 'ether');
+        }
+
+        window.onload = init;
+    </script>
+</body>
+
+</html>
